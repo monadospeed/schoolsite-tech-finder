@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tech Finder</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #64708a;
+      --line: #e4e9f2;
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --surface: #ffffff;
+      --background: #f5f7fb;
+      --success: #087443;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .app {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 18px 36px;
+    }
+
+    .hero {
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      max-width: 680px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .search-panel, .results-panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: 0 12px 35px rgb(23 32 51 / 7%);
+    }
+
+    .search-panel { padding: 18px; }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input {
+      min-width: 0;
+      flex: 1;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 13px 14px;
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgb(79 70 229 / 14%);
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 0 20px;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+    }
+
+    button:hover { background: var(--primary-dark); }
+    button:focus-visible { outline: 3px solid #a5b4fc; outline-offset: 2px; }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .example {
+      border: 1px solid #d8ddf8;
+      border-radius: 999px;
+      padding: 6px 11px;
+      background: #f7f7ff;
+      color: var(--primary-dark);
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .example:hover { background: #eef0ff; }
+
+    .results-panel {
+      min-height: 180px;
+      margin-top: 18px;
+      padding: 20px;
+    }
+
+    .result-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .count {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 16px;
+      background: #fcfdff;
+    }
+
+    .card-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      background: #eef0ff;
+      font-size: 1.35rem;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      text-transform: capitalize;
+    }
+
+    .price {
+      margin: 5px 0 8px;
+      color: var(--primary-dark);
+      font-size: 1.2rem;
+      font-weight: 850;
+    }
+
+    .match {
+      margin: 0;
+      color: var(--success);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .empty {
+      padding: 22px 4px 8px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty strong { color: var(--ink); }
+
+    .source-note {
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-align: center;
+    }
+
+    @media (max-width: 560px) {
+      .search-row { flex-direction: column; }
+      button { min-height: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <p class="eyebrow">Grounded technology search</p>
+      <h1>Find the right tech</h1>
+      <p class="subtitle">Ask about products, categories, or a budget. Results come only from the school technology catalog.</p>
+    </header>
+
+    <section class="search-panel" aria-label="Technology search">
+      <label for="query">What are you looking for?</label>
+      <div class="search-row">
+        <input id="query" type="search" autocomplete="off" placeholder="Try: headphones under $50">
+        <button id="searchButton" type="button">Search</button>
+      </div>
+      <div class="examples" aria-label="Example searches">
+        <button class="example" type="button">headphones under $50</button>
+        <button class="example" type="button">gaming products</button>
+        <button class="example" type="button">what costs $150?</button>
+      </div>
+    </section>
+
+    <section class="results-panel" aria-live="polite">
+      <div class="result-heading">
+        <h2 id="resultTitle">Catalog highlights</h2>
+        <span id="resultCount" class="count">6 products</span>
+      </div>
+      <div id="results" class="cards"></div>
+      <div id="empty" class="empty" hidden>
+        <strong>No catalog match found.</strong><br>
+        Try a product name, category, or budget such as “under $100.”
+      </div>
+    </section>
+
+    <p class="source-note">Grounded in the provided school catalog • No outside products are suggested</p>
+  </main>
+
+  <script>
+    // This catalog is the complete source of truth for the widget.
+    const catalog = [
+      { name: "Nintendo Switch", price: 300, category: "gaming", icon: "🎮", aliases: ["switch", "nintendo", "console"] },
+      { name: "AirPods", price: 150, category: "audio", icon: "🎧", aliases: ["airpod", "earbuds", "wireless earbuds"] },
+      { name: "Laptop", price: 400, category: "computers", icon: "💻", aliases: ["computer", "notebook"] },
+      { name: "Headphones", price: 50, category: "audio", icon: "🎧", aliases: ["headphone", "headset"] },
+      { name: "Controller", price: 70, category: "gaming", icon: "🕹️", aliases: ["game controller", "gamepad"] },
+      { name: "Phone", price: 500, category: "mobile", icon: "📱", aliases: ["smartphone", "cellphone", "mobile"] }
+    ];
+
+    const queryInput = document.querySelector("#query");
+    const results = document.querySelector("#results");
+    const empty = document.querySelector("#empty");
+    const resultTitle = document.querySelector("#resultTitle");
+    const resultCount = document.querySelector("#resultCount");
+
+    function parseBudget(query) {
+      const number = query.match(/\$?\s*(\d+(?:\.\d{1,2})?)/);
+      if (!number) return null;
+      const value = Number(number[1]);
+      if (/\b(under|below|less than|up to|max(?:imum)?|within|at most)\b/i.test(query)) {
+        return { type: "max", value };
+      }
+      if (/\b(over|above|more than|at least|min(?:imum)?)\b/i.test(query)) {
+        return { type: "min", value };
+      }
+      return { type: "exact", value };
+    }
+
+    function findCategory(query) {
+      const categories = {
+        gaming: ["gaming", "game", "games", "console"],
+        audio: ["audio", "sound", "music", "earbuds", "headphones", "headset"],
+        computers: ["computer", "computers", "laptop", "schoolwork"],
+        mobile: ["phone", "mobile", "cell"]
+      };
+      return Object.entries(categories).find(([, words]) => words.some(word => query.includes(word)))?.[0] ?? null;
+    }
+
+    function searchCatalog(rawQuery) {
+      const query = rawQuery.trim().toLowerCase();
+      const budget = parseBudget(query);
+      const category = findCategory(query);
+      const matches = catalog.filter(item => {
+        const mentioned = [item.name, item.category, ...item.aliases]
+          .some(term => query.includes(term.toLowerCase()));
+        const categoryMatches = category ? item.category === category : true;
+        const budgetMatches = !budget
+          || (budget.type === "max" && item.price <= budget.value)
+          || (budget.type === "min" && item.price >= budget.value)
+          || (budget.type === "exact" && item.price === budget.value);
+        const hasProductOrCategorySignal = mentioned || category;
+        return hasProductOrCategorySignal && budgetMatches;
+      });
+
+      // A budget-only query is useful, so search all catalog products when no
+      // product/category term was supplied.
+      if (budget && !category && !catalog.some(item =>
+        [item.name, ...item.aliases].some(term => query.includes(term.toLowerCase())))) {
+        return catalog.filter(item =>
+          (budget.type === "max" && item.price <= budget.value)
+          || (budget.type === "min" && item.price >= budget.value)
+          || (budget.type === "exact" && item.price === budget.value)
+        );
+      }
+
+      return matches;
+    }
+
+    function money(value) {
+      return `$${value.toLocaleString("en-US")}`;
+    }
+
+    function render(query = "") {
+      const trimmed = query.trim();
+      const matches = trimmed ? searchCatalog(trimmed) : catalog;
+      const budget = trimmed ? parseBudget(trimmed.toLowerCase()) : null;
+
+      resultTitle.textContent = trimmed ? "Search results" : "Catalog highlights";
+      resultCount.textContent = `${matches.length} product${matches.length === 1 ? "" : "s"}`;
+      results.innerHTML = matches.map(item => `
+        <article class="card">
+          <div class="card-icon" aria-hidden="true">${item.icon}</div>
+          <h3>${item.name}</h3>
+          <p class="price">${money(item.price)}</p>
+          <p class="match">${budget ? "Matches your budget" : item.category}</p>
+        </article>
+      `).join("");
+      empty.hidden = matches.length > 0;
+    }
+
+    function submitSearch() {
+      render(queryInput.value);
+    }
+
+    document.querySelector("#searchButton").addEventListener("click", submitSearch);
+    queryInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") submitSearch();
+    });
+    document.querySelectorAll(".example").forEach(button => {
+      button.addEventListener("click", () => {
+        queryInput.value = button.textContent;
+        submitSearch();
+        queryInput.focus();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
